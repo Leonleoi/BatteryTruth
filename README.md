@@ -1,5 +1,7 @@
 # BatteryTruth
 
+[English](README.md) | [中文](README.zh-CN.md)
+
 BatteryTruth is a native macOS SwiftUI app for reading real battery capacity, real battery health, and live power data from the Mac battery controller.
 
 It is built for macOS 15+ and packaged with Swift Package Manager.
