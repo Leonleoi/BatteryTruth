@@ -1,6 +1,6 @@
-# BatteryTruth v1.0.0
+# BatteryTruth v1.0.2
 
-Initial public release.
+Real protection alerts release.
 
 ## Highlights
 
@@ -11,6 +11,8 @@ Initial public release.
 - Uses the current Mac battery controller's `DesignCapacity`; it does not use a fixed model-capacity table.
 - Includes a full-window SwiftUI glass dashboard, menu bar display, and in-app settings.
 - Includes a macOS `.app` bundle in the release asset.
+- Sends local macOS notifications when real charge or battery temperature crosses the configured thresholds.
+- Shows live protection and notification status inside the settings panel.
 
 ## Requirements
 

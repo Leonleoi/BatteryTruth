@@ -1,3 +1,4 @@
+import AppKit
 import BatteryCore
 import SwiftUI
 
@@ -113,7 +114,7 @@ private struct DashboardView: View {
             MetricsGrid(snapshot: snapshot, monitor: monitor, availableWidth: availableWidth)
                 .reveal(appeared, delay: 0.24)
 
-            AppSettingsPanel()
+            AppSettingsPanel(monitor: monitor)
                 .reveal(appeared, delay: 0.28)
 
             FormulaPanel(snapshot: snapshot)
@@ -628,6 +629,7 @@ private struct FormulaPanel: View {
 }
 
 private struct AppSettingsPanel: View {
+    let monitor: BatteryMonitor
     @AppStorage("menuBarDisplayStyle") private var menuBarDisplayStyle = MenuBarDisplayStyle.percent.rawValue
     @AppStorage("chargeLimitEnabled") private var chargeLimitEnabled = true
     @AppStorage("chargeLimitPercent") private var chargeLimitPercent = 80.0
@@ -641,14 +643,26 @@ private struct AppSettingsPanel: View {
                 Label("设置选项", systemImage: "slider.horizontal.3")
                     .font(.system(.callout, design: .rounded, weight: .bold))
                 Spacer()
-                Button("系统电池设置") {
-                    openSystemBatterySettings()
+
+                HStack(spacing: 8) {
+                    Button("App 设置") {
+                        openAppSettings()
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(.footnote, design: .rounded, weight: .semibold))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .glassCapsule()
+
+                    Button("系统电池设置") {
+                        openSystemBatterySettings()
+                    }
+                    .buttonStyle(.plain)
+                    .font(.system(.footnote, design: .rounded, weight: .semibold))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 7)
+                    .glassCapsule()
                 }
-                .buttonStyle(.plain)
-                .font(.system(.footnote, design: .rounded, weight: .semibold))
-                .padding(.horizontal, 12)
-                .padding(.vertical, 7)
-                .glassCapsule()
             }
 
             VStack(alignment: .leading, spacing: 8) {
@@ -699,6 +713,29 @@ private struct AppSettingsPanel: View {
             )
             .disabled(!thermalProtectionEnabled)
             .opacity(thermalProtectionEnabled ? 1 : 0.45)
+
+            Divider()
+                .overlay(.white.opacity(0.16))
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text("真实监测状态")
+                    .font(.system(.caption, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.secondary)
+
+                SettingStatusLine(title: "提醒权限", value: monitor.notificationStatusText)
+                SettingStatusLine(title: "保护状态", value: monitor.protectionStatusText)
+                SettingStatusLine(title: "充电上限", value: monitor.chargeLimitAlertActive ? "已触发" : "未触发")
+                SettingStatusLine(title: "热保护", value: monitor.thermalLimitAlertActive ? "已触发" : "未触发")
+
+                Button("测试本地提醒") {
+                    monitor.postTestNotification()
+                }
+                .buttonStyle(.plain)
+                .font(.system(.footnote, design: .rounded, weight: .semibold))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .glassCapsule()
+            }
         }
         .padding(18)
         .glassPanel(cornerRadius: 22)
@@ -709,6 +746,31 @@ private struct AppSettingsPanel: View {
             return
         }
         openURL(url)
+    }
+
+    private func openAppSettings() {
+        NSApp.activate(ignoringOtherApps: true)
+
+        if !NSApp.sendAction(NSSelectorFromString("showSettingsWindow:"), to: nil, from: nil) {
+            NSApp.sendAction(NSSelectorFromString("showPreferencesWindow:"), to: nil, from: nil)
+        }
+    }
+}
+
+private struct SettingStatusLine: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.system(.footnote, design: .rounded))
+                .foregroundStyle(.secondary)
+            Spacer()
+            Text(value)
+                .font(.system(.footnote, design: .rounded, weight: .semibold))
+                .monospacedDigit()
+        }
     }
 }
 

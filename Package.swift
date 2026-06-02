@@ -29,7 +29,8 @@ let package = Package(
             dependencies: ["BatteryCore"],
             linkerSettings: [
                 .linkedFramework("AppKit"),
-                .linkedFramework("SwiftUI")
+                .linkedFramework("SwiftUI"),
+                .linkedFramework("UserNotifications")
             ]
         ),
         .testTarget(
