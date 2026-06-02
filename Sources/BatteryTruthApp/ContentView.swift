@@ -1,4 +1,3 @@
-import AppKit
 import BatteryCore
 import SwiftUI
 
@@ -645,8 +644,8 @@ private struct AppSettingsPanel: View {
                 Spacer()
 
                 HStack(spacing: 8) {
-                    Button("App 设置") {
-                        openAppSettings()
+                    SettingsLink {
+                        Text("App 设置")
                     }
                     .buttonStyle(.plain)
                     .font(.system(.footnote, design: .rounded, weight: .semibold))
@@ -746,14 +745,6 @@ private struct AppSettingsPanel: View {
             return
         }
         openURL(url)
-    }
-
-    private func openAppSettings() {
-        NSApp.activate(ignoringOtherApps: true)
-
-        if !NSApp.sendAction(NSSelectorFromString("showSettingsWindow:"), to: nil, from: nil) {
-            NSApp.sendAction(NSSelectorFromString("showPreferencesWindow:"), to: nil, from: nil)
-        }
     }
 }
 
